@@ -40,18 +40,17 @@ myApp store = do
   S.get "/script/:name" $ do
     name <- S.param "name" :: S.ActionM String
     storeRef <- liftIO $ readIORef store
-    let nameText = T.pack name
-        script = Map.lookup name storeRef
-    scriptResult <- liftIO $ evalDuktapeScript script
-    S.text $ T.pack name
+    let storeVal = Map.findWithDefault "" name storeRef
+    scriptResult <- liftIO $ evalDuktapeScript storeVal
+    S.json $ object ["result" .= scriptResult]
 
   S.post "/script/:name" $ do
     name <- S.param "name" :: S.ActionM String
     script <- S.param "script" :: S.ActionM String
-    liftIO $
-      modifyIORef store $ \s ->
-        Map.insert name script s
-    S.text (T.pack name)
+    storeRef <- liftIO $ readIORef store
+    let storeVal = Map.findWithDefault "" name storeRef
+    liftIO $ writeIORef store (Map.insert name script storeRef)
+    S.text "Script saved"
 
 stringToByteString :: String -> BLU.ByteString
 stringToByteString = BLU.pack
