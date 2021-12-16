@@ -24,10 +24,16 @@ dependencies:
 - aeson
 - wai
 - warp
+- containers
 - scotty # Contains wai, wai-extra, warp
 - hspec
 - hspec-wai
 - hs-duktape
+- text
+# I can't fucking figure out how to convert between
+# Data.Internal.Lazy.Text and String -- so here goes another dep
+- text-conversions
+- bytestring
 
 library:
   source-dirs: src
@@ -40,6 +46,8 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    # Custom
+    - -Wall
     dependencies:
     - haskell-scripted-wai
 
@@ -51,5 +59,7 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    # Custom
+    - -Wall
     dependencies:
     - haskell-scripted-wai
